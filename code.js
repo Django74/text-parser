@@ -11,7 +11,7 @@ function getStats(txt) {
 		averageWordLength: getAverageWordLength(txt),
 		maxLineLength: getMaxLineLength(txt),
 		palindromes: getPalindromes(txt),
-		longestWords: getLongestWords(txt).slice(0,10),
+		longestWords: getLongestWords(txt),
 		mostFrequentWords: getMostFrequentWords(txt)
 	};
 }
@@ -129,7 +129,7 @@ function getLongestWords(txt)
 	txt = txt.split(" ");
 	wordArray = txt.filter(function(v){return v!==''});
 	
-	return mergeSort(wordArray);
+	return mergeSort(wordArray).slice(0,10);
 }
 
 function mergeSort(wordArray)
