@@ -160,6 +160,7 @@ function merge(left, right)
 	//only unique words
 	while (left.length && right.length) 
 	{
+		//length of left is greater, so it is in correct position, add to array
 		if (left[0].length > right[0].length) 
 		{
 			if (result.indexOf(left[0])== -1)
@@ -169,6 +170,7 @@ function merge(left, right)
 				left.shift();
 		} 
 		
+		//length is same but left's word is alphabetically in correct order, add to array
 		else if (left[0].length == right[0].length && left[0] < right[0])
 		{
 			if (result.indexOf(left[0])== -1)
@@ -177,6 +179,8 @@ function merge(left, right)
 			else
 				left.shift();
 		}
+		
+		//not in correct sorted position so swap
 		else {
 			if (result.indexOf(right[0])== -1)
 				result.push(right.shift());
