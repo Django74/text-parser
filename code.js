@@ -18,6 +18,7 @@ function getStats(txt) {
 
 function getNumberWords(txt)
 {
+	//parse out non-alphanumeric characters
 	txt = txt.replace(/[^0-9a-z]/g," ");
 	txt = txt.split(" ");
 	return txt.filter(function(v){return v!==''}).length;	
@@ -25,10 +26,12 @@ function getNumberWords(txt)
 
 function getNumberLines(txt)
 {
+	//empty line means no lines
 	if (txt.length == 0){
 		return 0;
 	}
 	
+	//regex split based on line characters
 	else{
 		return txt.split(/\r\n|\r|\n/).length;
 	}
@@ -37,7 +40,8 @@ function getNumberLines(txt)
 
 function getNonEmptyLines(txt)
 {
-	return 0;
+	//match white space and non-whitespace characters and find length
+	return txt.match((/^\s*\S/gm) || "").length;
 }
 
 function getAverageWordLength(txt)
@@ -46,27 +50,31 @@ function getAverageWordLength(txt)
 	txt = txt.split(" ");
 	wordArray = txt.filter(function(v){return v!==''});
 	
+	//add up total word count
 	var wordCount = 0;
 	for (i = 0; i <wordArray.length; i++)
 	{
 		wordCount += wordArray[i].length;
 	}
 	
+	//find average
 	return wordCount/wordArray.length;
 }
 
 function getMaxLineLength(txt)
 {
+	//replace characters with only \n to enable counting
 	txt = txt.replace(/\r\n/,"\n");
-	wordArray = txt.split("\n");
+	lineArray = txt.split("\n");//split by new line
 	
 	var maxLength = 0;
 	
-	for (i=0; i<wordArray.length; i++)
+	//find max line length
+	for (i=0; i<lineArray.length; i++)
 	{
-		if (wordArray[i].length > maxLength)
+		if (lineArray[i].length > maxLength)
 		{
-			maxLength = wordArray[i].length;
+			maxLength = lineArray[i].length;
 		}
 	}
 	
@@ -79,10 +87,12 @@ function getPalindromes(txt)
 	txt = txt.split(" ");
 	wordArray = txt.filter(function(v){return v!==''});
 	
+	//if word is palindrome then it is added to array
 	var palindromeArray = [];
 	for (i = 0; i <wordArray.length; i++)
 	{
-		if (isPalindrome(wordArray[i]) && wordArray[i].length > 1 && palindromeArray.indexOf(wordArray[i])== -1){
+		if (isPalindrome(wordArray[i]) && wordArray[i].length > 1 && palindromeArray.indexOf(wordArray[i])== -1)//no duplicates, and 1 character palindromes
+		{
 			palindromeArray.push(wordArray[i]);
 		}
 	}
@@ -92,11 +102,13 @@ function getPalindromes(txt)
 
 function isPalindrome(txt)
 {
+	//base case
 	if (txt.length==0 || txt.length==1)
 	{
 		return true;
 	}
 	
+	//recursive case
 	else
 	{			
 		if (txt.length > 1 && txt.charAt(0) == txt.charAt(txt.length - 1))
@@ -118,20 +130,20 @@ function getLongestWords(txt)
 	wordArray = txt.filter(function(v){return v!==''});
 	
 	return mergeSort(wordArray);
-	
-	
-	
 }
 
 function mergeSort(wordArray)
 {
+	//base case, array is length 1 or 0, which is trivially sorted
 	if (wordArray.length < 2)
 		return wordArray;
 	
+	//split array in half
 	var middle = parseInt(wordArray.length/2);
 	var left = wordArray.slice(0, middle);
 	var right = wordArray.slice(middle, wordArray.length);
 	
+	//recurse
 	return merge(mergeSort(left), mergeSort(right));
 }
 
@@ -139,57 +151,122 @@ function merge(left, right)
 {
 	var result = [];
 	
-		while (left.length && right.length) 
-		{
-			if (left[0].length > right[0].length) 
-			{
-				if (result.indexOf(left[0])== -1)
-					result.push(left.shift());
-				
-				else
-					left.shift();
-			} 
-			
-			else if (left[0].length == right[0].length && left[0] < right[0])
-			{
-				if (result.indexOf(left[0])== -1)
-					result.push(left.shift());
-				
-				else
-					left.shift();
-			}
-			else {
-				if (result.indexOf(right[0])== -1)
-					result.push(right.shift());
-				
-				else
-					right.shift();
-			}
-		}
-	 
-		while (left.length)
+	//Combine both sides and add to new array
+	//sorted by highest length & alphabetical order
+	//only unique words
+	while (left.length && right.length) 
+	{
+		if (left[0].length > right[0].length) 
 		{
 			if (result.indexOf(left[0])== -1)
-					result.push(left.shift());
-				
+				result.push(left.shift());
+			
 			else
 				left.shift();
-	 
-		}	
+		} 
 		
-		while (right.length)
-		{	
+		else if (left[0].length == right[0].length && left[0] < right[0])
+		{
+			if (result.indexOf(left[0])== -1)
+				result.push(left.shift());
+			
+			else
+				left.shift();
+		}
+		else {
 			if (result.indexOf(right[0])== -1)
-					result.push(right.shift());
-				
+				result.push(right.shift());
+			
 			else
 				right.shift();
 		}
+	}
+ 
+	//add rest of the words to result array
+	while (left.length)
+	{
+		if (result.indexOf(left[0])== -1)
+				result.push(left.shift());
+			
+		else
+			left.shift();
+ 
+	}	
+	
+	//add rest of the words to result array
+	while (right.length)
+	{	
+		if (result.indexOf(right[0])== -1)
+				result.push(right.shift());
+			
+		else
+			right.shift();
+	}
 	 
     return result;
 }
 
 function getMostFrequentWords(txt)
 {
-
+	txt = txt.replace(/[^0-9a-z]/g," ");
+	txt = txt.split(" ");
+	var wordArray = txt.filter(function(v){return v!==''});
+	
+	//iterate through alphabetically sorted list of unique words, and for each unique word count the occurences of that word in the original duplicated-filled array 
+	var sortedWordArray = mergeSort(wordArray);
+	var mostFrequentWordsArray = [];
+	var freqencyArray =[];
+	
+	for(var i=0;i<sortedWordArray.length;i++)
+	{
+		var count = wordArray.filter(item => item == sortedWordArray[i]).length;
+		mostFrequentWordsArray[i] = sortedWordArray[i];
+		freqencyArray[i]=count;
+	}
+		
+		
+	//sort the two arrays (words, and frequency count) by highest frequency count and alphabetical order
+	var isElementSwapped;
+    do 
+	{
+        isElementSwapped = false;
+        for (var i=0; i < mostFrequentWordsArray.length-1; i++) 
+		{
+			//if frequency of next word is higher than current index's word
+            if (freqencyArray[i] < freqencyArray[i+1]) {
+                var temp = freqencyArray[i];
+                freqencyArray[i] = freqencyArray[i+1];
+                freqencyArray[i+1] = temp;
+				
+				temp = mostFrequentWordsArray[i];
+                mostFrequentWordsArray[i] = mostFrequentWordsArray[i+1];
+                mostFrequentWordsArray[i+1] = temp;
+				
+                isElementSwapped = true;
+            }
+			
+			//if next word frequency is equal but it comes before current index's word alphabetical-wise
+			else if (freqencyArray[i] == freqencyArray[i+1] && mostFrequentWordsArray[i] > mostFrequentWordsArray[i+1]) 
+			{
+                var temp = freqencyArray[i];
+                freqencyArray[i] = freqencyArray[i+1];
+                freqencyArray[i+1] = temp;
+				
+				temp = mostFrequentWordsArray[i];
+                mostFrequentWordsArray[i] = mostFrequentWordsArray[i+1];
+                mostFrequentWordsArray[i+1] = temp;
+				
+                isElementSwapped = true;
+            }
+        }
+    } while (isElementSwapped);
+	
+	
+	//concatenate the sorted words and frequencies into one array
+	for (var i=0; i < mostFrequentWordsArray.length; i++) 
+	{
+		mostFrequentWordsArray[i] = mostFrequentWordsArray[i] + "(" + freqencyArray[i] + ")";
+	}
+	
+	return mostFrequentWordsArray.slice(0,10);
 }
